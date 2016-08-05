@@ -1,15 +1,23 @@
 ﻿<#
 .SYNOPSIS
-   This script is written to handle system state and full backups of each domain controller on the network.
+   This script is written to create systemstate backups of a single windows server.
 .DESCRIPTION
-   Using powershell remoting, this script starts a system state backup on each server in the provided list.
-   Credentials are provided via a network-accessable clixml file.
+   Uses the built-in Windows Server Backup module to create the backup then copies that backup to 2 network locations.
 #>
 
-$Servers = 'XXXXXXXXXX','YYYYYYYYYY','ZZZZZZZZZZZ'
-$Cred = Import-Clixml '\\WWWWWWWWWW\IT Admin\Credential XMLs\AdministratorCred.clixml'
+$FileSysCred = Import-Clixml '\\XXXXXXXXXX\IT Admin\Credential XMLs\BackupexecCred.clixml'
 
-ForEach ($i in $Servers)
-{
-    Invoke-Command -ComputerName $i -Credential $Cred -ScriptBlock {wbadmin start systemstatebackup -backupTarget:'\\WWWWWWWWWW\IT Admin\Backups'}
-}
+# Create the backup
+wbadmin start systemstatebackup -backupTarget:'C:\Backups' -quiet
+
+# Create the needed PSDrives
+New-PSDrive -Name Z -PSProvider FileSystem -Root '\\YYYYYYYYYY\backup' -Credential $FileSysCred
+New-PSDrive -Name Y -PSProvider FileSystem -Root '\\XXXXXXXXXX\Y$' -Credential $FileSysCred
+
+# Copy the backup to target locations
+Copy-Item -Path C:\Backups -Destination Z:\ -Credential $FileSysCred -Recurse
+Copy-Item -Path C:\Backups -Destination Y:\ -Credential $FileSysCred -Recurse
+
+# Delete the PSDrives to be safe
+Remove-PSDrive -Name Z
+Remove-PSDrive -Name Y
