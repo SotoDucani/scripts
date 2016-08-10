@@ -25,6 +25,7 @@
 .OUTPUTS
     None
 #>
+
 function New-CredentialXML
 {
     [CmdletBinding()]
@@ -49,12 +50,14 @@ function New-CredentialXML
             Write-Host "You need to provide credentials" -ForegroundColor Yellow
             $Credential = Get-Credential
         }
+
         # Check to make sure credentials were actually provided
         if ($Credential)
         {
             $FilePath = $Path + '\' + $Credential.UserName + 'Cred.clixml'
             Export-Clixml -InputObject $Credential -Path $FilePath
         }
+
         # Credentials were not provided, so no clixml file will be created.
         else
         {
@@ -65,5 +68,4 @@ function New-CredentialXML
     {
         Write-Host "The path that was provided is invalid. Please check the path and try again." -ForegroundColor Red
     }
-    
 }
