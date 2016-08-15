@@ -4,15 +4,18 @@
 .DESCRIPTION
     The Reset-ADUser cmdlet unlocks and resets an AD account password. This is done using the ActiveDirectory PS Module. If this module is not available on the computer running the script, it will fail. 
 .EXAMPLE
-    To Be Made
+    PS C:\> Reset-ADUser -Credential Admin -GivenName 'Josh'
+
+    Resets the user with the given name Josh
 .EXAMPLE
-    To Be Made
-.EXAMPLE
-    To Be Made
+    PS C:\> Get-ADUser * | Reset-ADUser
+
+    Resets every user that is returned by Get-ADUser.
 .INPUTS
     Microsoft.ActiveDirectory.Management.ADUser
+    System.Object
 
-    You can pipe a single or multiple ADUser objects to Reset-ADUser.
+    You can pipe a single (ADUser) or multiple ADUser objects (Object) to Reset-ADUser.
 .OUTPUTS
     None
 #>
