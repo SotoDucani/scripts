@@ -8,38 +8,47 @@
 .INPUTS
 	None
 .OUTPUTS
-	A failure log and a list of admins by computer.
-.NOTES
-	File Name : Get-DomainLocalAdmins.ps1
-	Author : Unknown Reddit User (Thanks!!)
-	Written for : Powershell V3.0
-	Version : 1.0
+	None
 #>
+try
+{
+    import-module activedirectory
+}
+catch
+{
+    Write-Host "Could not import the active directory module for some reason" -ForegroundColor Red
+}
 
-import-module activedirectory
-
-# Gets all computers from the directory except for those that start with VM
-$domainComputers = get-adcomputer -filter {enabled -eq "True"}
-
+#Log locations
 $FailLog = "C:\Users\Josh.he\unreachables.txt"
 $computersWithAdmin = "C:\Users\Josh.he\admins.txt"
 
-foreach($computer in $domainComputers) {
+# Gets all computers from the directory
+$domainComputers = get-adcomputer -filter {enabled -eq "True"}
+
+foreach($computer in $domainComputers)
+{
 	# Get admin group on remote computer
     $admingroup = get-wmiobject win32_group -Filter "LocalAccount=True AND SID='S-1-5-32-544'" -computer $computer.name -erroraction silentlycontinue
-    if ($admingroup){
+    if ($admingroup)
+    {
 		# Make a query to get relevant info
         $query="GroupComponent = `"Win32_Group.Domain='" + $admingroup.Domain + "',NAME='" + $admingroup.Name + "'`""
+
         # Execute query and only return domain members
 		$users = (Get-WmiObject win32_groupuser -Filter $query -computer $computer.name) | select PartComponent | Where {$_ -like "*Domain=`"pmi`"*"}
+
 		# Tidy up string
         $admins = foreach ($user in $users) {($user.PartComponent.split(","))[1]}
-        if ($admins.length -gt 0){
-            add-content $computersWithAdmin $computer.name
-            add-content $computersWithAdmin $admins
-            add-content $computersWithAdmin " "
+        if ($admins.length -gt 0)
+        {
+            Add-Content $computersWithAdmin $computer.name
+            Add-Content $computersWithAdmin $admins
+            Add-Content $computersWithAdmin " "
         }
-    } else{
+    }
+    else
+    {
         "failed"
         Add-Content -Path $FailLog $computer.name
     }
