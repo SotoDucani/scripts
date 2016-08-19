@@ -3,10 +3,6 @@
    Gets a list of folders within a share that have individual user permissions set, rather than the approved role groups from within AD
 .EXAMPLE
     .\Get-NonGroupPermissions.ps1 -Path '\\server\share\path' -Domain acmecorp -OutputFilepath C:\Temp\Test.csv -Email -To reciever@acme.com -From sender@acme.com -SmtpServer smtp.acme.com -Subject 'Test email' -Verbose -Recurse
-.NOTES
-	THIS WAS NOT WRITTEN BY JOSH HERRMANN. PLEASE REFERENCE THE BELOW INFORMATION FOR PROPER CREDIT.
-    Author - Robert Ainsworth - https://ainsey11.com
-    Contributor - Shawn Esterman - https://github.com/ShawnEsterman
 #>
 
 [CmdletBinding()]

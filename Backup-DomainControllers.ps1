@@ -18,6 +18,6 @@ New-PSDrive -Name Y -PSProvider FileSystem -Root '\\XXXXXXXXXX\Y$' -Credential $
 Copy-Item -Path C:\Backups -Destination Z:\ -Credential $FileSysCred -Recurse
 Copy-Item -Path C:\Backups -Destination Y:\ -Credential $FileSysCred -Recurse
 
-# Delete the PSDrives to be safe
+# Delete the PSDrives
 Remove-PSDrive -Name Z
 Remove-PSDrive -Name Y
