@@ -5,11 +5,6 @@
 	This script is written to partially automate the backup process for Dokuwiki. This is done using Powershell's built in Copy-Item.
 	
 	You must edit the variables in the script to customize it. There are no parameters accepted.
-.NOTES
-	File Name: Backup-Dokuwiki.ps1
-	Author : Joshua Herrmann
-	Written for : Powershell V3.0
-	Version : 1.1
 #>
 $ErrorActionPreference ="Inquire"
 
