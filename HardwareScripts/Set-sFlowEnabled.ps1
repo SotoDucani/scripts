@@ -9,15 +9,10 @@
 	None - Settings are manually changed in the script file
 .OUTPUTS
 	None
-.NOTES
-	File Name: Set-sFlowEnabled.ps1
-	Author : Joshua Herrmann
-	Written for : Powershell V3.0
-	Version : 1.0
 #>
 
 # Enter your device IP addresses here:
-$d1 = "192.168.0.220"
+$d1 = "DEVICEIPADDRESS"
 
 # Enter your user accounts here:
 $u1 = Read-Host "Enter Username to access the device"
