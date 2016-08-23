@@ -20,8 +20,8 @@ catch
 }
 
 #Log locations
-$FailLog = "C:\Users\Josh.he\unreachables.txt"
-$computersWithAdmin = "C:\Users\Josh.he\admins.txt"
+$FailLog = "C:\temp\unreachables.txt"
+$computersWithAdmin = "C:\temp\admins.txt"
 
 # Gets all computers from the directory
 $domainComputers = get-adcomputer -filter {enabled -eq "True"}
