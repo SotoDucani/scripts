@@ -59,7 +59,7 @@ function Backup-FortiGate
 	Remove-SSHSession -RemoveAll
 	
 	# Run the backup command
-	Start-Process "C:\Program Files (x86)\PUTTY\pscp.exe" -ArgumentList ("$($Username)@$($Device):sys_config C:\Temp\josh.he") -Wait
+	Start-Process "C:\Program Files (x86)\PUTTY\pscp.exe" -ArgumentList ("$($Username)@$($Device):sys_config C:\Temp") -Wait
 	$SBresult = Get-Content "C:\Temp\sys_config"
 	$SBresult | Out-File -FilePath "$Path\$DeviceHostname-Backup-$Date.conf"
 	Remove-Item "C:\Temp\sys_config"
