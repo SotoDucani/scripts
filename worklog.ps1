@@ -1,11 +1,6 @@
 <#
 .SYNOPSIS
 	Beep and prompt the user to fill out a form that appears. Used as a worklog by running on a scheduled task every 2 hours.
-.NOTES
-	File Name : worklog.ps1
-	Author : Joshua Herrmann
-	Written for : Powershell V3.0
-	Version : 1.0
 #>
 
 [console]::beep(2000,500)
