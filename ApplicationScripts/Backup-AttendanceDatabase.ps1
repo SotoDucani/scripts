@@ -15,10 +15,10 @@
 #>
 
 $limit = (Get-Date).AddDays(-15)
-$path = "\\YYYYYYYYYY\IT Admin\Backups\AttendanceBackups"
+$path = "BACKUPLOCATION"
 
 #Use Robocopy to copy new files, ignoring already existing files
-ROBOCOPY 'C:\Attendance Data\Backup' '\\YYYYYYYYYY\IT Admin\Backups\AttendanceBackups'
+ROBOCOPY 'C:\Attendance Data\Backup' $path
 
 # Delete files older than the $limit
 Get-ChildItem -Path $path -Recurse -Force | Where-Object { !$_.PSIsContainer -and $_.CreationTime -lt $limit } | Remove-Item -Force
