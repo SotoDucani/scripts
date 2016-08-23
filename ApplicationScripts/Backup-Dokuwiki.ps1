@@ -14,9 +14,9 @@ $limit = (Get-Date).AddDays(-15)
 $filename ="DokuwikiBackup"
 
 # Enter the file path you wish to backup to: (Note that the file location must already exist)
-$filepath = "\\YYYYYYYYYY\IT Admin\Backups\DokuWiki Backups"
+$filepath = "BACKUPLOCATION"
 
-$creds = Import-Clixml "\\YYYYYYYYYY\it admin\Credential XMLs\BackupuserCred.clixml"
+$creds = Import-Clixml "CREDENTIALXMLLOCATION"
 
 Copy-Item -Path S:\Bitnami\dokuwiki -Destination $filepath -Recurse
 Rename-Item $filepath\dokuwiki $filename-$time
