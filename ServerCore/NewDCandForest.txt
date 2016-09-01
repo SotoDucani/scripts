@@ -1,5 +1,4 @@
 #Default prompt when the install for server core is cmd.exe
-#Type 'powershell' in order to bring up the powershell console
 
 #First step is to setup the network connection
 
