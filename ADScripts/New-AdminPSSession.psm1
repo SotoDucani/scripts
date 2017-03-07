@@ -24,7 +24,7 @@ function New-AdminPSSession
     #If there is no -Server specified
     elseif (!$Server -and $Cred)
     {
-        New-PSSession -ComputerName fm-dc01 -Credential $Cred | Enter-PSSession
+        New-PSSession -ComputerName server01 -Credential $Cred | Enter-PSSession
     }
 }
 
