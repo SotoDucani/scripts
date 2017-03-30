@@ -15,7 +15,7 @@ function New-AdminPSSession
     )
     
     $Cred = Get-Credential -Credential domain\username
-    $DefaultServer = server01
+    $DefaultServer = "server01"
     
     #If the -Server parameter is used
     if ($Server -and $Cred)
