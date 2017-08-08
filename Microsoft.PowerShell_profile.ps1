@@ -17,4 +17,9 @@ function prompt
 }
 
 # Custom Starting Location
-Set-Location "G:\My Documents\WindowsPowerShell\Scripts"
+Set-Location "C:\WindowsPowerShell"
+
+#Finally; Start a transcript
+$date = get-date -UFormat "%h_%d_%Y AT %H_%M_%S"
+$logfile = "C:\WindowsPowerShell\Transcripts\$date.txt"
+Start-Transcript -Path $logfile
