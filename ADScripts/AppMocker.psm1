@@ -387,7 +387,7 @@ function Merge-ApplockerPolicies {
                    Position=0)][string]$One,
 
         [Parameter(Mandatory=$false,
-                   Position=0)][string]$Two,
+                   Position=1)][string]$Two,
                    
         [Parameter(Mandatory=$false,
                    Position=2)][string]$FileName,
@@ -406,16 +406,16 @@ function Merge-ApplockerPolicies {
     $paths = $null
 
     #Get the policies content and force to XML type
-    $policyOne = [xml](Get-Content -Path $One)
-    $policyTwo = [xml](Get-Content -Path $Two)
+    $policyOne = [xml](Get-Content -Path $One -Encoding UTF8)
+    $policyTwo = [xml](Get-Content -Path $Two -Encoding UTF8)
 
     #Clone the blank Applocker policy template
     $newPolicy = $blankPolicy.clone()
 
     #Combine the file hashes |
-    #Select the unique rules based off of the Names
-    $hashes = @($policyOne.ApplockerPolicy.SelectNodes('//RuleCollection[@Type="Exe"]//FileHashRule') +
-                $policyTwo.ApplockerPolicy.SelectNodes('//RuleCollection[@Type="Exe"]//FileHashRule') | Sort-Object -Property Name -Unique)
+    #Select the unique rules based off of the Name
+    $hashes = @($policyOne.ApplockerPolicy.SelectNodes('//RuleCollection[@Type="Exe"]/FileHashRule') +
+                $policyTwo.ApplockerPolicy.SelectNodes('//RuleCollection[@Type="Exe"]/FileHashRule'))
 
     #Combine the publisher rules |
     #Select the unique rules based off of the Names
@@ -452,6 +452,100 @@ function Merge-ApplockerPolicies {
     return $newPolicy
 }
 
-#Expose these two functions to the module user
+function Merge-MassApplockerPolicies {
+    <#
+    .SYNOPSIS
+        Merges all applocker policies located at a certain path together while getting rid of duplicate rules.
+        
+        DO NOT USE for policies that were not created with this module.
+    .DESCRIPTION
+        
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        
+    .EXAMPLE
+        No Export;
+    .EXAMPLE
+        
+    .PARAMETER Path
+        Path where the .xml files are located
+    .PARAMETER FileName
+        When the -Export flag is used, this is the file name the policy is saved to. Include the .xml at the end.
+    .PARAMETER Export
+        When the -Export flag is used, the script saves the policy to the filename specified.
+    #>
+    
+    [CmdletBinding()]
+    Param
+    (
+        [Parameter(Mandatory=$true,
+                   Position=0)][string]$Path,
+                   
+        [Parameter(Mandatory=$false,
+                   Position=1)][string]$FileName,
+                   
+        [Parameter(Mandatory=$false,
+                   Position=2)][switch]$Export
+    )
+    
+    #Get the set of xml policies to merge
+    $policyArray = Get-ChildItem -Path $Path -Filter *.xml | Select-Object -ExpandProperty FullName
+    
+    #Clone the blank Applocker policy template
+    $mergedPolicy = $blankPolicy.clone()
+    
+    
+    Foreach ($policy in $policyArray) {
+        Write-Verbose "Merging $policy"
+        
+        #Initilize Variables
+        $policyOne = $null
+        $policyTwo = $null
+        $hashes = $null
+        $publishers = $null
+        $paths = $null
+
+        #Get the policies content and force to XML type
+        $policyOne = [xml](Get-Content -Path $policy -Encoding UTF8)
+
+        #Combine the file hashes |
+        #Select the unique rules based off of the Name
+        $hashes = @($policyOne.ApplockerPolicy.SelectNodes('//RuleCollection[@Type="Exe"]/FileHashRule'))
+
+        #Combine the publisher rules |
+        #Select the unique rules based off of the Names
+        $publishers = @($policyOne.ApplockerPolicy.SelectNodes('//RuleCollection[@Type="Exe"]//FilePublisherRule'))
+        
+        #Combine the path rules |
+        #Select the unique rules based off of the Names
+        $paths = @($policyOne.ApplockerPolicy.SelectNodes('//RuleCollection[@Type="Exe"]//FilePathRule'))
+
+        #Indicate the node that rules need to be dropped in under
+        $parentNode = $mergedPolicy.ApplockerPolicy.SelectSingleNode('//RuleCollection[@Type="Exe"]')
+        
+        #Insert all the rules
+        $hashes | % {
+            [void]$parentNode.appendChild($mergedPolicy.ImportNode($_, $true))
+        }
+
+        $publishers | % {
+            [void]$parentNode.appendChild($mergedPolicy.ImportNode($_, $true))
+        }
+
+        $paths | % {
+            [void]$parentNode.appendChild($mergedPolicy.ImportNode($_, $true))
+        }
+    }
+    
+    #Save to $Filename
+    if ($Export) {
+        Write-Verbose "Saving Merged Policy"
+        $mergedPolicy.save($FileName)
+    }
+    
+    return $mergedPolicy
+}
+
+#Expose these functions to the module user
 Export-ModuleMember -Function Get-ApplicationApplockerPolicy
 Export-ModuleMember -Function Merge-ApplockerPolicies
+Export-ModuleMember -Function Merge-MassApplockerPolicies
