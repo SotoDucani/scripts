@@ -1,0 +1,3 @@
+[System.Management.ManagementObject[]]$MissingUpdates = Get-WmiObject -Class CCM_SoftwareUpdate -Filter "NOT Name LIKE '%Definition%' and ComplianceState=0" -Namespace root\CCM\ClientSDK -ComputerName $ComputerName -Credential $RemotingCreds -ErrorAction Stop
+
+$Invoke = Invoke-WmiMethod -computername $ComputerName -Class CCM_SoftwareUpdatesManager -Name InstallUpdates -ArgumentList ( , $MissingUpdates) -Namespace root\ccm\clientsdk -Credential $RemotingCreds -ErrorAction Stop
